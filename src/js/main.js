@@ -2,6 +2,10 @@ import { MapManager } from './mapManager.js';
 import { UIController } from './uiController.js';
 import { SearchService } from './searchService.js';
 import { StorageManager } from './storageManager.js';
+import { BuildingsManager } from './buildingsManager.js';
+import { MarkerManager } from './markerManager.js';
+import { MeasurementTools } from './measurementTools.js';
+import { URLManager } from './urlManager.js';
 
 class RoadWorldApp {
     constructor() {
@@ -9,6 +13,10 @@ class RoadWorldApp {
         this.uiController = null;
         this.searchService = null;
         this.storageManager = null;
+        this.buildingsManager = null;
+        this.markerManager = null;
+        this.measurementTools = null;
+        this.urlManager = null;
     }
 
     async init() {
@@ -19,6 +27,10 @@ class RoadWorldApp {
 
         this.uiController = new UIController(this.mapManager);
         this.searchService = new SearchService(this.mapManager);
+        this.buildingsManager = new BuildingsManager(this.mapManager);
+        this.markerManager = new MarkerManager(this.mapManager, this.storageManager);
+        this.measurementTools = new MeasurementTools(this.mapManager);
+        this.urlManager = new URLManager(this.mapManager);
 
         // Setup event listeners
         this.setupMapEvents();
@@ -26,16 +38,30 @@ class RoadWorldApp {
         this.setupSearch();
         this.setupLayers();
         this.setupQuickLocations();
+        this.setupPanels();
+        this.setupTools();
 
         // Initial UI update
         this.uiController.updateStats();
         this.updateSavedCount();
 
-        // Load last position if available
-        const lastPosition = this.storageManager.getLastPosition();
-        if (lastPosition && lastPosition.center) {
-            this.mapManager.map.jumpTo(lastPosition);
+        // Check URL params first
+        const urlParams = this.urlManager.loadFromURL();
+        if (urlParams) {
+            this.mapManager.map.jumpTo(urlParams);
+            if (urlParams.style) {
+                // Will be handled by style change
+            }
+        } else {
+            // Load last position if available
+            const lastPosition = this.storageManager.getLastPosition();
+            if (lastPosition && lastPosition.center) {
+                this.mapManager.map.jumpTo(lastPosition);
+            }
         }
+
+        // Load saved markers
+        this.markerManager.loadMarkersFromStorage();
 
         console.log('RoadWorld initialized');
     }
@@ -77,8 +103,10 @@ class RoadWorldApp {
 
         // 3D buildings toggle
         document.getElementById('btn-3d').addEventListener('click', (e) => {
-            e.target.classList.toggle('active');
-            if (e.target.classList.contains('active')) {
+            const isActive = this.buildingsManager.toggle();
+            e.target.classList.toggle('active', isActive);
+
+            if (isActive) {
                 this.mapManager.easeTo({ pitch: 60, duration: 500 });
             } else {
                 this.mapManager.easeTo({ pitch: 0, duration: 500 });
@@ -246,6 +274,218 @@ class RoadWorldApp {
     updateSavedCount() {
         const count = this.storageManager.getSavedLocations().length;
         this.uiController.updateElement('saved-count', count.toString());
+    }
+
+    setupPanels() {
+        // Tools panel
+        document.getElementById('btn-tools').addEventListener('click', () => {
+            this.togglePanel('tools-panel');
+        });
+
+        document.getElementById('tools-close').addEventListener('click', () => {
+            this.closePanel('tools-panel');
+        });
+
+        // Marker add panel
+        document.getElementById('marker-add-close').addEventListener('click', () => {
+            this.closePanel('marker-add-panel');
+        });
+
+        // Saved locations panel
+        document.getElementById('saved-close').addEventListener('click', () => {
+            this.closePanel('saved-panel');
+        });
+
+        document.getElementById('btn-save').addEventListener('click', () => {
+            this.openSavedPanel();
+        });
+    }
+
+    setupTools() {
+        // Share button
+        document.getElementById('btn-share').addEventListener('click', async () => {
+            const result = await this.urlManager.copyToClipboard();
+            if (result.success) {
+                this.showNotification('Share link copied to clipboard!');
+            } else {
+                this.showNotification('Failed to copy link');
+            }
+        });
+
+        // Marker button
+        document.getElementById('btn-marker').addEventListener('click', () => {
+            this.openMarkerPanel();
+        });
+
+        // Measure button
+        document.getElementById('btn-measure').addEventListener('click', () => {
+            this.togglePanel('tools-panel');
+        });
+
+        // Measurement tools
+        document.getElementById('measure-distance').addEventListener('click', () => {
+            this.measurementTools.startDistance();
+            this.showNotification('Click on map to measure distance');
+            this.setupMeasurementListener();
+        });
+
+        document.getElementById('measure-area').addEventListener('click', () => {
+            this.measurementTools.startArea();
+            this.showNotification('Click on map to measure area');
+            this.setupMeasurementListener();
+        });
+
+        document.getElementById('measure-clear').addEventListener('click', () => {
+            this.measurementTools.clear();
+            document.getElementById('measurement-result').innerHTML = '';
+        });
+
+        // Copy URL
+        document.getElementById('copy-url').addEventListener('click', async () => {
+            const result = await this.urlManager.copyToClipboard();
+            if (result.success) {
+                this.showNotification('Share link copied!');
+            }
+        });
+
+        // Add marker from tools
+        document.getElementById('add-marker-custom').addEventListener('click', () => {
+            this.openMarkerPanel();
+        });
+
+        // View markers
+        document.getElementById('view-markers').addEventListener('click', () => {
+            const markers = this.markerManager.getMarkers();
+            console.log('Markers:', markers);
+            this.showNotification(`${markers.length} markers on map`);
+        });
+
+        // Clear markers
+        document.getElementById('clear-markers').addEventListener('click', () => {
+            if (confirm('Clear all markers?')) {
+                this.markerManager.clearAllMarkers();
+                this.showNotification('All markers cleared');
+            }
+        });
+
+        // Save marker
+        document.getElementById('marker-save').addEventListener('click', () => {
+            const name = document.getElementById('marker-name').value;
+            const category = document.getElementById('marker-category').value;
+            const description = document.getElementById('marker-description').value;
+
+            if (!name) {
+                alert('Please enter a marker name');
+                return;
+            }
+
+            const center = this.mapManager.getCenter();
+            this.markerManager.addMarker([center.lng, center.lat], {
+                name,
+                category,
+                description
+            });
+
+            this.showNotification('Marker added!');
+            this.closePanel('marker-add-panel');
+
+            // Clear form
+            document.getElementById('marker-name').value = '';
+            document.getElementById('marker-description').value = '';
+        });
+    }
+
+    setupMeasurementListener() {
+        const updateResults = () => {
+            const results = this.measurementTools.getResults();
+            if (results) {
+                document.getElementById('measurement-result').innerHTML = `
+                    <strong>${results.type === 'distance' ? 'Distance' : 'Area'}:</strong><br>
+                    ${results.formatted}<br>
+                    <small>${results.points} points</small>
+                `;
+            }
+        };
+
+        // Update on map click
+        const clickHandler = () => {
+            setTimeout(updateResults, 100);
+        };
+
+        this.mapManager.map.on('click', clickHandler);
+    }
+
+    openMarkerPanel() {
+        const center = this.mapManager.getCenter();
+        document.getElementById('marker-name').placeholder = `Marker at ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
+        this.openPanel('marker-add-panel');
+        this.closePanel('tools-panel');
+    }
+
+    openSavedPanel() {
+        const savedLocations = this.storageManager.getSavedLocations();
+        const listEl = document.getElementById('saved-locations-list');
+
+        if (savedLocations.length === 0) {
+            listEl.innerHTML = '<p style="opacity: 0.5; text-align: center; padding: 20px;">No saved locations</p>';
+        } else {
+            listEl.innerHTML = savedLocations.map(loc => `
+                <div class="saved-item" data-lat="${loc.lat}" data-lng="${loc.lng}" data-zoom="${loc.zoom}" data-id="${loc.id}">
+                    <div class="saved-item-name">${loc.name}</div>
+                    <div class="saved-item-coords">${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)}</div>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            listEl.querySelectorAll('.saved-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const lat = parseFloat(item.dataset.lat);
+                    const lng = parseFloat(item.dataset.lng);
+                    const zoom = parseFloat(item.dataset.zoom);
+
+                    this.mapManager.flyTo({
+                        center: [lng, lat],
+                        zoom: zoom,
+                        duration: 2000
+                    });
+
+                    this.closePanel('saved-panel');
+                });
+            });
+        }
+
+        this.openPanel('saved-panel');
+    }
+
+    togglePanel(panelId) {
+        const panel = document.getElementById(panelId);
+        if (panel.style.display === 'none' || !panel.style.display) {
+            this.openPanel(panelId);
+        } else {
+            this.closePanel(panelId);
+        }
+    }
+
+    openPanel(panelId) {
+        document.getElementById(panelId).style.display = 'block';
+    }
+
+    closePanel(panelId) {
+        document.getElementById(panelId).style.display = 'none';
+    }
+
+    showNotification(message, duration = 3000) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideIn 0.3s ease-out reverse';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, duration);
     }
 }
 

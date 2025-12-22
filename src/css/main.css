@@ -468,3 +468,323 @@ body {
         display: none;
     }
 }
+
+/* Panels */
+.tools-panel,
+.marker-add-panel,
+.saved-panel {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-height: 80vh;
+    background: rgba(10, 15, 30, 0.98);
+    border: 1px solid rgba(0, 212, 255, 0.4);
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(0, 212, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.panel-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+.panel-close:hover {
+    background: rgba(255, 0, 102, 0.3);
+    transform: scale(1.1);
+}
+
+.panel-content {
+    padding: 20px;
+    max-height: calc(80vh - 60px);
+    overflow-y: auto;
+}
+
+.tool-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tool-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.tool-section h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 12px;
+}
+
+.tool-btn {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tool-btn:hover {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    transform: translateX(4px);
+}
+
+.tool-btn.primary {
+    background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+    border: none;
+    text-align: center;
+    font-weight: 600;
+}
+
+.tool-btn.primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 13px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #00d4ff;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.measurement-result {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(0, 212, 255, 0.1);
+    border-left: 3px solid #00d4ff;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    color: #00d4ff;
+}
+
+.saved-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.saved-item {
+    padding: 12px;
+    background: rgba(0, 212, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.saved-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+    border-color: #00d4ff;
+    transform: translateX(4px);
+}
+
+.saved-item-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    color: #00d4ff;
+    margin-bottom: 4px;
+}
+
+.saved-item-coords {
+    font-size: 11px;
+    opacity: 0.6;
+}
+
+/* Custom Markers */
+.custom-marker {
+    cursor: pointer;
+}
+
+.marker-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+}
+
+.marker-icon:hover {
+    transform: rotate(-45deg) scale(1.1);
+}
+
+.custom-marker .marker-icon {
+    transform: rotate(-45deg);
+}
+
+.custom-marker .marker-icon > * {
+    transform: rotate(45deg);
+}
+
+.marker-popup {
+    font-family: 'Exo 2', sans-serif;
+    min-width: 200px;
+}
+
+.marker-popup-header {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #00d4ff;
+}
+
+.marker-popup-category {
+    font-size: 11px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 8px;
+}
+
+.marker-popup-desc {
+    font-size: 12px;
+    margin-bottom: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.marker-popup-coords {
+    font-size: 10px;
+    opacity: 0.5;
+    margin-bottom: 8px;
+}
+
+.marker-delete-btn {
+    width: 100%;
+    padding: 6px 12px;
+    background: rgba(255, 0, 102, 0.2);
+    border: 1px solid rgba(255, 0, 102, 0.3);
+    border-radius: 4px;
+    color: #FF0066;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.marker-delete-btn:hover {
+    background: rgba(255, 0, 102, 0.3);
+    border-color: #FF0066;
+}
+
+/* Measurement Markers */
+.measurement-marker {
+    cursor: pointer;
+}
+
+.measurement-marker-dot {
+    width: 24px;
+    height: 24px;
+    background: #00d4ff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.5);
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    padding: 12px 20px;
+    background: rgba(0, 212, 255, 0.9);
+    border-radius: 8px;
+    color: #000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

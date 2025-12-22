@@ -27,6 +27,7 @@ export class StorageManager {
     getDefaultData() {
         return {
             savedLocations: [],
+            markers: [],
             settings: {
                 defaultStyle: 'satellite',
                 show3DBuildings: false,

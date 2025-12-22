@@ -151,6 +151,11 @@
         <div class="divider"></div>
         <button class="ctrl-btn" id="btn-locate" title="My Location">📍</button>
         <button class="ctrl-btn" id="btn-save" title="Save Location">💾</button>
+        <button class="ctrl-btn" id="btn-marker" title="Add Marker">🎯</button>
+        <div class="divider"></div>
+        <button class="ctrl-btn" id="btn-measure" title="Measure Distance">📏</button>
+        <button class="ctrl-btn" id="btn-share" title="Share Location">🔗</button>
+        <button class="ctrl-btn" id="btn-tools" title="More Tools">🛠️</button>
     </div>
 
     <!-- Instructions -->
@@ -159,6 +164,75 @@
         <div><kbd>SCROLL</kbd> Zoom</div>
         <div><kbd>CTRL+DRAG</kbd> Tilt</div>
         <div><kbd>RIGHT-CLICK</kbd> Rotate</div>
+    </div>
+
+    <!-- Tools Panel -->
+    <div class="ui-overlay tools-panel" id="tools-panel" style="display: none;">
+        <div class="panel-header">
+            <span>Tools</span>
+            <button class="panel-close" id="tools-close">✕</button>
+        </div>
+        <div class="panel-content">
+            <div class="tool-section">
+                <h4>Measurement</h4>
+                <button class="tool-btn" id="measure-distance">📏 Measure Distance</button>
+                <button class="tool-btn" id="measure-area">📐 Measure Area</button>
+                <button class="tool-btn" id="measure-clear">🗑️ Clear Measurements</button>
+                <div class="measurement-result" id="measurement-result"></div>
+            </div>
+            <div class="tool-section">
+                <h4>Markers</h4>
+                <button class="tool-btn" id="add-marker-custom">🎯 Add Marker Here</button>
+                <button class="tool-btn" id="view-markers">📍 View All Markers</button>
+                <button class="tool-btn" id="clear-markers">🗑️ Clear All Markers</button>
+            </div>
+            <div class="tool-section">
+                <h4>Share</h4>
+                <button class="tool-btn" id="copy-url">🔗 Copy Share Link</button>
+                <button class="tool-btn" id="export-view">📸 Export View</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marker Add Panel -->
+    <div class="ui-overlay marker-add-panel" id="marker-add-panel" style="display: none;">
+        <div class="panel-header">
+            <span>Add Marker</span>
+            <button class="panel-close" id="marker-add-close">✕</button>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="marker-name" placeholder="Enter marker name" />
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="marker-category">
+                    <option value="custom">Custom</option>
+                    <option value="favorite">Favorite</option>
+                    <option value="work">Work</option>
+                    <option value="home">Home</option>
+                    <option value="travel">Travel</option>
+                    <option value="food">Food</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description (optional)</label>
+                <textarea id="marker-description" placeholder="Add a description"></textarea>
+            </div>
+            <button class="tool-btn primary" id="marker-save">Save Marker</button>
+        </div>
+    </div>
+
+    <!-- Saved Locations Panel -->
+    <div class="ui-overlay saved-panel" id="saved-panel" style="display: none;">
+        <div class="panel-header">
+            <span>Saved Locations</span>
+            <button class="panel-close" id="saved-close">✕</button>
+        </div>
+        <div class="panel-content">
+            <div id="saved-locations-list" class="saved-list"></div>
+        </div>
     </div>
 
     <!-- JavaScript Modules -->
