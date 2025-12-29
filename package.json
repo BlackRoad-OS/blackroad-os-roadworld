@@ -16,5 +16,8 @@
   ],
   "author": "BlackRoad Systems",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "prettier": "^3.7.4"
+  }
 }
