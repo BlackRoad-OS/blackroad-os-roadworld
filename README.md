@@ -31,7 +31,7 @@ BlackRoad Earth street-level exploration module built with MapLibre GL.
 
 ## Technology Stack
 
-- **MapLibre GL**: Open-source mapping library
+- **MapLibre GL**: open-access mapping library
 - **Vanilla JavaScript**: Modular ES6+ architecture
 - **LocalStorage**: Client-side data persistence
 - **Nominatim**: OpenStreetMap geocoding service
@@ -158,4 +158,4 @@ Part of the BlackRoad Earth infrastructure. Integrates with:
 
 ## License
 
-MIT License - BlackRoad Systems
+BlackRoad Proprietary License - BlackRoad Systems
